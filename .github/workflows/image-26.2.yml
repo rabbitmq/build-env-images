@@ -20,5 +20,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: dockerfiles/26.2/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: pivotalrabbitmq/build-env-26.2:latest
