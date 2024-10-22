@@ -164,5 +164,6 @@ rm -rf bats-core
 # --------------------------------------------------------------------
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
+      bash-completion \
       elinks \
       vim
