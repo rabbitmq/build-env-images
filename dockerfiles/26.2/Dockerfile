@@ -82,7 +82,6 @@ RUN apt-get clean && \
       libcurl3-gnutls \
       man \
       mandoc \
-      openssh-client \
       osslsigncode \
       rsync \
       xmlto \
@@ -148,6 +147,18 @@ RUN apt-get install -y -V --fix-missing --no-install-recommends \
       nsis \
       rpm \
       tofrodos
+
+# --------------------------------------------------------------------
+# Tools for testing RabbitMQ packages (Debian, RPM, Windows installer)
+# --------------------------------------------------------------------
+
+#
+# Debian
+#
+
+# Unlike apt, dpkg -i requires package dependencies to be pre-installed
+RUN apt-get install -y -V --fix-missing --no-install-recommends \
+    logrotate
 
 # --------------------------------------------------------------------
 # For running bats tests
