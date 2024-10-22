@@ -51,7 +51,6 @@ RUN ERLANG_VERSION=1:26.2.5.4-1 && \
 RUN apt-get clean && \
     apt-get update && \
     apt-get install -y -V --fix-missing --no-install-recommends \
-    apt-transport-https \
       build-essential \
       clang \
       curl \
