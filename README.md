@@ -18,10 +18,19 @@ Bitnami, and so on.
 
 The images are then [published to Docker Hub](https://hub.docker.com/u/pivotalrabbitmq).
 
+
 ## Repository Layout
 
 This repository is GitHub Actions-driven. Workflow definitions can be found under
 their usual place, `.github/workflows`.
+
+The Dockerfiles can be found under `dockerfiles`.
+
+
+## Build Results
+
+See [Actions](https://github.com/rabbitmq/build-env-images/actions).
+
 
 ## Erlang 26.x
 
