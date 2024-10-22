@@ -2,6 +2,7 @@ name: Rebuild Erlang 26.2 image
 
 on:
   push:
+    paths: ['dockerfiles/**', '.github/workflows/**']
 
 jobs:
   docker:
