@@ -20,6 +20,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           file: dockerfiles/26.2/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          # ppa*.rabbitmq.com only provide amd64 packages at the moment
+          platforms: linux/amd64
           push: true
           tags: rabbitmqdevenv/build-env-26.2:latest
