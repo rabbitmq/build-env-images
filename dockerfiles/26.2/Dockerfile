@@ -51,6 +51,7 @@ RUN ERLANG_VERSION=1:26.2.5.4-1 && \
 RUN apt-get clean && \
     apt-get update && \
     apt-get install -y -V --fix-missing --no-install-recommends \
+    apt-transport-https \
       build-essential \
       clang \
       curl \
@@ -116,7 +117,7 @@ RUN set -xe \
 RUN set -xe \
   && ELIXIR_VERSION="1.17.3" \
   && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/refs/tags/v${ELIXIR_VERSION}.zip" \
-  && ELIXIR_DOWNLOAD_SHA256="6116c14d5e61ec301240cebeacbf9e97125a4d45cd9071e65e0b958d5ebf3890" \
+  && ELIXIR_DOWNLOAD_SHA256="94544b7200265ee45ac7fa6d4681824815c888a009face7f2d1d6fe38624814c" \
   && curl -fSL -o elixir-source.zip $ELIXIR_DOWNLOAD_URL \
   && echo "$ELIXIR_DOWNLOAD_SHA256 elixir-source.zip" | sha256sum -c - \
   && unzip -d /tmp/elixir-source elixir-source.zip \
@@ -129,10 +130,6 @@ RUN set -xe \
 # Put erl_call(1) in the $PATH.
 RUN ln -fs /usr/lib/erlang/lib/erl_interface-*/bin/erl_call /usr/bin/erl_call
 
-# --------------------------------------------------------------------
-# Packages used to test RabbitMQ
-# --------------------------------------------------------------------
-
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
       ldap-utils \
       netcat-traditional \
@@ -142,29 +139,7 @@ RUN apt-get install -y -V --fix-missing --no-install-recommends \
       python3-dev \
       python3-pip \
       python3-setuptools \
-      slapd \
       daemonize
-
-RUN git clone --depth 1 https://github.com/bats-core/bats-core.git && \
-    cd bats-core && \
-    ./install.sh /usr && \
-    cd .. && \
-    rm -rf bats-core
-
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-      ca-certificates-java \
-      openjdk-17-jre-headless \
-      openjdk-17-jdk-headless
-
-ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
-
-# Install Java tools separately to be sure it picks the version of
-# OpenJDK installed above.
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-      maven
-
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-        apt-transport-https
 
 # --------------------------------------------------------------------
 # Tools for building RabbitMQ packages (Debian, RPM, Windows installer)
@@ -176,7 +151,17 @@ RUN apt-get install -y -V --fix-missing --no-install-recommends \
       tofrodos
 
 # --------------------------------------------------------------------
-# Packages to help debugging from the container directly
+# For running bats tests
+# --------------------------------------------------------------------
+
+RUN git clone --depth 1 https://github.com/bats-core/bats-core.git && \
+cd bats-core && \
+./install.sh /usr && \
+cd .. && \
+rm -rf bats-core
+
+# --------------------------------------------------------------------
+# For debugging from the container directly
 # --------------------------------------------------------------------
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
