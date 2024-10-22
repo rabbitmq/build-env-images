@@ -37,6 +37,12 @@ See [Actions](https://github.com/rabbitmq/build-env-images/actions).
 This Debian Bookworm-based image provides a very recent version of Erlang 26.x plus a very
 recent version of Elixir.
 
+To pull it:
+
+```bash
+docker pull pivotalrabbitmq/build-env-26.2
+```
+
 
 ## License
 
