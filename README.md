@@ -2,7 +2,7 @@
 
 ## Disclaimer
 
-This repository is very much a work-in-progress. This can break, documentation will be lacking,
+This subproject is very new. Things can break, documentation will be lacking,
 design decisions will be revisited, and so on. Please do not rely on this repository
 unless you plan to regularly contribute to RabbitMQ and have consulted with the RabbitMQ Core Team.
 
@@ -36,6 +36,9 @@ See [Actions](https://github.com/rabbitmq/build-env-images/actions).
 
 This Debian Bookworm-based image provides a very recent version of Erlang 26.x plus a very
 recent version of Elixir.
+
+Only `amd64` packages are produced because our team only produces `amd64` Debian packages for Erlang
+at the moment.
 
 To pull it:
 
