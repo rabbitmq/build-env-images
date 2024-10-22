@@ -19,5 +19,6 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
+          file: dockerfiles/26.2/Dockerfile
           push: true
           tags: pivotalrabbitmq/build-env-26.2:latest
