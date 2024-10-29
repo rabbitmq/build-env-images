@@ -49,11 +49,13 @@ docker pull rabbitmqdevenv/build-env-26.2
 ## Chocolatey Package Publishing
 
 [RabbitMQ Chocolatey package](https://github.com/rabbitmq/chocolatey-package) is published
-using an OCI image built on top of the official [`chocolatey/choco`](https://hub.docker.com/r/chocolatey/choco) one,
-which can be [inspected on GitHub](https://github.com/chocolatey/choco/blob/develop/docker/).
+using the official OCI image from the creators of Chocolatey, [`chocolatey/choco`](https://hub.docker.com/r/chocolatey/choco).
+Its source can be [inspected on GitHub](https://github.com/chocolatey/choco/blob/develop/docker/).
 
 
-## License
+## Copyright and License
 
-This repository is released under the Mozilla Public License 2.0,
-same as open source RabbitMQ.
+This work is dual-licensed under the Apache License 2.0 and the Mozilla Public License 2.0.
+Users can choose any of these licenses according to their needs.
+
+SPDX-License-Identifier: Apache-2.0 OR MPL-2.0
