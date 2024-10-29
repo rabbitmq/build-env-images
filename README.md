@@ -48,8 +48,9 @@ docker pull rabbitmqdevenv/build-env-26.2
 
 ## Chocolatey Package Publishing
 
-[RabbitMQ Chocolatey package](https://github.com/rabbitmq/chocolatey-package) used to be published using a custom
-OCI image. These days there is an official image from the maintainers of Chocolatey, [`chocolatey/choco`](https://hub.docker.com/r/chocolatey/choco).
+[RabbitMQ Chocolatey package](https://github.com/rabbitmq/chocolatey-package) is published
+using an OCI image built on top of the official [`chocolatey/choco`](https://hub.docker.com/r/chocolatey/choco) one,
+which can be [inspected on GitHub](https://github.com/chocolatey/choco/blob/develop/docker/).
 
 
 ## License
