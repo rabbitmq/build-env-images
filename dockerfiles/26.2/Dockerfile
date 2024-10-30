@@ -91,7 +91,7 @@ RUN apt-get clean && \
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
       -t bookworm-backports \
-      git
+      git openssh-client
 
 # Verify the version of the installed Erlang packages.
 # The version was pinned above, but if that specific version is unavailable,
