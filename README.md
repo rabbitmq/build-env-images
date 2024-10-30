@@ -32,7 +32,7 @@ The Dockerfiles can be found under `dockerfiles`.
 See [Actions](https://github.com/rabbitmq/build-env-images/actions).
 
 
-## Erlang 26.x (amd64)
+## Erlang 26.x and 27.x (amd64)
 
 This Debian Bookworm-based image provides a very recent version of Erlang 26.x plus a very
 recent version of Elixir.
@@ -43,15 +43,14 @@ at the moment.
 To pull it:
 
 ```bash
+# for Erlang 26.x
 docker pull rabbitmqdevenv/build-env-26.2
 ```
 
-## Chocolatey Package Publishing
-
-[RabbitMQ Chocolatey package](https://github.com/rabbitmq/chocolatey-package) is published
-using the official OCI image from the creators of Chocolatey, [`chocolatey/choco`](https://hub.docker.com/r/chocolatey/choco).
-Its source can be [inspected on GitHub](https://github.com/chocolatey/choco/blob/develop/docker/).
-
+```bash
+# for Erlang 27.x
+docker pull rabbitmqdevenv/build-env-27.1
+```
 
 ## Copyright and License
 
