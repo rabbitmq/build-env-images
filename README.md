@@ -32,7 +32,7 @@ The Dockerfiles can be found under `dockerfiles`.
 See [Actions](https://github.com/rabbitmq/build-env-images/actions).
 
 
-## Erlang 26.x and 27.x (amd64)
+## Server Build Environment Images (amd64)
 
 This Debian Bookworm-based image provides a very recent version of Erlang 26.x plus a very
 recent version of Elixir.
@@ -45,11 +45,6 @@ To pull it:
 ```bash
 # for Erlang 26.x
 docker pull rabbitmqdevenv/build-env-26.2
-```
-
-```bash
-# for Erlang 27.x
-docker pull rabbitmqdevenv/build-env-27.1
 ```
 
 ## Copyright and License
