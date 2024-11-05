@@ -13,7 +13,7 @@ jobs:
         with:
           repository: rabbitmq/delete-release-action
           ref: main
-          path: delete-release-action
+          path: ${{ env.GITHUB_WORKSPACE }}/delete-release-action
       - name: "ls delete-release-action"
         run: "ls -lha ./delete-release-action"
       - name: Set up QEMU
@@ -28,7 +28,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: ./delete-release-action/Dockerfile
+          file: ${{ env.GITHUB_WORKSPACE }}/delete-release-action/Dockerfile
           # ppa*.rabbitmq.com only provide amd64 packages at the moment.
           # Launchpad does produce arm64 packages but cannot be used on Debian :/
           platforms: linux/amd64
