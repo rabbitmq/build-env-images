@@ -2,7 +2,7 @@ name: Rebuild rabbitmq/delete-release-action image
 
 on:
   push:
-    paths: ['.github/workflows/image-delete-release-actions.yml']
+    paths: ['.github/workflows/image-delete-release-action.yml']
 
 jobs:
   docker:
