@@ -1,13 +1,19 @@
-name: Rebuild Erlang 27.1 image
+name: Rebuild rabbitmq/delete-release-action image
 
 on:
   push:
-    paths: ['dockerfiles/27.1/Dockerfile', '.github/workflows/image-27.1.yml']
+    paths: ['.github/workflows/image-delete-release-actions.yml']
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: Clone rabbitmq/delete-release-action
+        uses: actions/checkout@v4
+        with:
+          repository: rabbitmq/delete-release-action
+          ref: main
+          path: delete-release-action
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
@@ -20,9 +26,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: dockerfiles/27.1/Dockerfile
+          file: delete-release-action/Dockerfile
           # ppa*.rabbitmq.com only provide amd64 packages at the moment.
           # Launchpad does produce arm64 packages but cannot be used on Debian :/
           platforms: linux/amd64
           push: true
-          tags: rabbitmqdevenv/build-env-27.1:latest
+          tags: rabbitmqdevenv/delete-release-action:latest
