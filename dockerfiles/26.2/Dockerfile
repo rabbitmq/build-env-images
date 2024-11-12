@@ -39,7 +39,7 @@ RUN echo 'deb https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/debian book
 # used for all erlang* packages. Without this, apt-get(1) would try to
 # install dependencies using the latest version. This would conflict
 # with the strict pinning in all packages, and thus fail.
-RUN ERLANG_VERSION=1:26.2.5.4-1 && \
+RUN ERLANG_VERSION=1:26.2.5.5-1 && \
     echo 'Package: erlang*' > /etc/apt/preferences.d/erlang && \
     echo "Pin: version $ERLANG_VERSION" >> /etc/apt/preferences.d/erlang && \
     echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/erlang
