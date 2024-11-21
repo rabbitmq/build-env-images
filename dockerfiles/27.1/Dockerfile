@@ -32,7 +32,7 @@ RUN apt-get clean && \
       gnupg
 
 # Our own rabbitmq-erlang repository to provision Erlang.
-RUN echo 'deb https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/debian bookworm main' > /etc/apt/sources.list.d/rabbitmq-erlang.list && \
+RUN echo 'deb https://ppa1.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/debian bookworm main' > /etc/apt/sources.list.d/rabbitmq-erlang.list && \
     wget -O- https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/gpg.E495BB49CC4BBE5B.key | apt-key add -
 
 # We need to set an APT preference to make sure $ERLANG_VERSION is
