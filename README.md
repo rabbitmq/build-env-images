@@ -34,7 +34,7 @@ See [Actions](https://github.com/rabbitmq/build-env-images/actions).
 
 ## Server Build Environment Images (amd64)
 
-This Debian Bookworm-based image provides a very recent version of Erlang 26.x plus a very
+This Debian Bookworm-based images provide very recent versions of Erlang 27.x and 26.x plus a very
 recent version of Elixir.
 
 Only `amd64` packages are produced because our team only produces `amd64` Debian packages for Erlang
@@ -45,6 +45,11 @@ To pull it:
 ```bash
 # for Erlang 26.x
 docker pull rabbitmqdevenv/build-env-26.2
+```
+
+```bash
+# for Erlang 27.x
+docker pull rabbitmqdevenv/build-env-27.1
 ```
 
 ## Copyright and License
