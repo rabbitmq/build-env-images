@@ -10,7 +10,8 @@ This repository contains OCI images useful for
 These images are NOT meant to be used to run RabbitMQ. For that, see the [community Docker image](https://github.com/docker-library/rabbitmq),
 Bitnami, and so on.
 
-The images are then [build by workflows in `rabbitmq/server-packages`](https://github.com/rabbitmq/server-packages) and [published to Docker Hub](https://hub.docker.com/u/rabbitmqdevenv).
+The images are then built by workflows in this repository, [published to Docker Hub](https://hub.docker.com/u/rabbitmqdevenv),
+and [used by workflows in `rabbitmq/server-packages`](https://github.com/rabbitmq/server-packages).
 
 
 ## Repository Layout
