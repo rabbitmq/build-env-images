@@ -1,11 +1,5 @@
 # Images for Building and Testing of Open Source RabbitMQ Packages
 
-## Disclaimer
-
-This subproject is very new. Things can break, documentation will be lacking,
-design decisions will be revisited, and so on. Please do not rely on this repository
-unless you plan to regularly contribute to RabbitMQ and have consulted with the RabbitMQ Core Team.
-
 ## What is This?
 
 This repository contains OCI images useful for
@@ -16,7 +10,7 @@ This repository contains OCI images useful for
 These images are NOT meant to be used to run RabbitMQ. For that, see the [community Docker image](https://github.com/docker-library/rabbitmq),
 Bitnami, and so on.
 
-The images are then [published to Docker Hub](https://hub.docker.com/u/pivotalrabbitmq).
+The images are then [build by workflows in `rabbitmq/server-packages`](https://github.com/rabbitmq/server-packages) and [published to Docker Hub](https://hub.docker.com/u/rabbitmqdevenv).
 
 
 ## Repository Layout
