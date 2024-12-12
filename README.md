@@ -44,7 +44,7 @@ docker pull rabbitmqdevenv/build-env-26.2
 
 ```bash
 # for Erlang 27.x
-docker pull rabbitmqdevenv/build-env-27.1
+docker pull rabbitmqdevenv/build-env-27.2
 ```
 
 ## Copyright and License
