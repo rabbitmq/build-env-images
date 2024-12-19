@@ -20,7 +20,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: dockerfiles/27.1/Dockerfile
+          file: dockerfiles/27.2/Dockerfile
           # ppa*.rabbitmq.com only provide amd64 packages at the moment.
           # Launchpad does produce arm64 packages but cannot be used on Debian :/
           platforms: linux/amd64
