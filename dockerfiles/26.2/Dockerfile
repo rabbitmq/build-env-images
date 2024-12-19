@@ -102,9 +102,9 @@ RUN set -xe \
     && test "$installed_version" = "$wanted_version"
 
 RUN set -xe \
-    && REBAR3_VERSION="3.23.0" \
+    && REBAR3_VERSION="3.24.0" \
     && REBAR3_DOWNLOAD_URL="https://github.com/erlang/rebar3/releases/download/${REBAR3_VERSION}/rebar3" \
-    && REBAR3_DOWNLOAD_SHA256="195591a13abf6a337aecbbc4c9b33d3684b0f3b14c76e84c007baff38db20393" \
+    && REBAR3_DOWNLOAD_SHA256="d2d31cfb98904b8e4917300a75f870de12cb5167cd6214d1043e973a56668a54" \
     && curl -fSL -o "rebar3-${REBAR3_VERSION}" "$REBAR3_DOWNLOAD_URL" \
     && echo "$REBAR3_DOWNLOAD_SHA256 rebar3-${REBAR3_VERSION}" | sha256sum -c - \
     && mv "rebar3-${REBAR3_VERSION}" /usr/local/bin/rebar3 \
