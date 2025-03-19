@@ -83,6 +83,7 @@ RUN apt-get clean && \
       man \
       mandoc \
       osslsigncode \
+      p7zip \
       rsync \
       xmlto \
       xsltproc \
