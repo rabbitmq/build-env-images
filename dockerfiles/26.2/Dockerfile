@@ -89,7 +89,7 @@ RUN apt-get clean && \
     xsltproc \
     zip \
     unzip && \
-    alias 7z=7zz
+    ln -s $(which 7zz) /usr/bin/7z
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
     -t bookworm-backports \
