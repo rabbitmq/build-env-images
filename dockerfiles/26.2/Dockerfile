@@ -11,7 +11,7 @@
 ## The Original Code is RabbitMQ.
 #
 ## The Initial Developer of the Original Code is GoPivotal, Inc.
-## Copyright (c) 2018-2024 Broadcom, Inc. or its subsidiaries.
+## Copyright (c) 2007-2025 Broadcom, Inc. or its subsidiaries.
 
 FROM debian:bookworm
 
