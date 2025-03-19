@@ -25,11 +25,11 @@ RUN echo 'deb http://httpredir.debian.org/debian bookworm-backports main' \
 RUN apt-get clean && \
     apt-get update && \
     apt-get install -y -V --no-install-recommends \
-      apt-transport-https \
-      ca-certificates \
-      wget \
-      debconf-utils \
-      gnupg
+    apt-transport-https \
+    ca-certificates \
+    wget \
+    debconf-utils \
+    gnupg
 
 # Our own rabbitmq-erlang repository to provision Erlang.
 RUN echo 'deb https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/debian bookworm main' > /etc/apt/sources.list.d/rabbitmq-erlang.list && \
@@ -51,48 +51,48 @@ RUN ERLANG_VERSION=1:27.3-1 && \
 RUN apt-get clean && \
     apt-get update && \
     apt-get install -y -V --fix-missing --no-install-recommends \
-      build-essential \
-      clang \
-      curl \
-      debhelper \
-      # for Debian package builds
-      elixir \
-      erlang-base \
-      erlang-crypto \
-      erlang-edoc \
-      erlang-eldap \
-      erlang-erl-docgen \
-      erlang-eunit \
-      erlang-inets \
-      erlang-mnesia \
-      erlang-os-mon \
-      erlang-parsetools \
-      erlang-public-key \
-      erlang-runtime-tools \
-      erlang-ssh \
-      erlang-ssl \
-      erlang-syntax-tools \
-      erlang-tools \
-      erlang-xmerl \
-      erlang-nox \
-      erlang-dev \
-      erlang-src \
-      erlang-common-test \
-      erlang-dialyzer \
-      libcurl3-gnutls \
-      man \
-      mandoc \
-      osslsigncode \
-      p7zip \
-      rsync \
-      xmlto \
-      xsltproc \
-      zip \
-      unzip
+    build-essential \
+    clang \
+    curl \
+    debhelper \
+    # for Debian package builds
+    elixir \
+    erlang-base \
+    erlang-crypto \
+    erlang-edoc \
+    erlang-eldap \
+    erlang-erl-docgen \
+    erlang-eunit \
+    erlang-inets \
+    erlang-mnesia \
+    erlang-os-mon \
+    erlang-parsetools \
+    erlang-public-key \
+    erlang-runtime-tools \
+    erlang-ssh \
+    erlang-ssl \
+    erlang-syntax-tools \
+    erlang-tools \
+    erlang-xmerl \
+    erlang-nox \
+    erlang-dev \
+    erlang-src \
+    erlang-common-test \
+    erlang-dialyzer \
+    libcurl3-gnutls \
+    man \
+    mandoc \
+    osslsigncode \
+    p7zip \
+    rsync \
+    xmlto \
+    xsltproc \
+    zip \
+    unzip
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
-      -t bookworm-backports \
-      git openssh-client
+    -t bookworm-backports \
+    git openssh-client
 
 # Verify the version of the installed Erlang packages.
 # The version was pinned above, but if that specific version is unavailable,
@@ -114,40 +114,40 @@ RUN set -xe \
 # Compile Elixir from source so that we know for sure what version was used to built it.
 # Elixir's bin and lib are installed under /usr/local/bin and /usr/local/lib.
 RUN set -xe \
-  && ELIXIR_VERSION="1.17.3" \
-  && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/refs/tags/v${ELIXIR_VERSION}.zip" \
-  && ELIXIR_DOWNLOAD_SHA256="94544b7200265ee45ac7fa6d4681824815c888a009face7f2d1d6fe38624814c" \
-  && curl -fSL -o elixir-source.zip $ELIXIR_DOWNLOAD_URL \
-  && echo "$ELIXIR_DOWNLOAD_SHA256 elixir-source.zip" | sha256sum -c - \
-  && unzip -d /tmp/elixir-source elixir-source.zip \
-  && make -C "/tmp/elixir-source/elixir-${ELIXIR_VERSION}" \
-  && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/bin/* /usr/local/bin/ \
-  && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/lib/* /usr/local/lib/ \
-  && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/man/* /usr/local/man/ \
-  && rm -rf elixir-source.zip /tmp/elixir-source
+    && ELIXIR_VERSION="1.17.3" \
+    && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/refs/tags/v${ELIXIR_VERSION}.zip" \
+    && ELIXIR_DOWNLOAD_SHA256="94544b7200265ee45ac7fa6d4681824815c888a009face7f2d1d6fe38624814c" \
+    && curl -fSL -o elixir-source.zip $ELIXIR_DOWNLOAD_URL \
+    && echo "$ELIXIR_DOWNLOAD_SHA256 elixir-source.zip" | sha256sum -c - \
+    && unzip -d /tmp/elixir-source elixir-source.zip \
+    && make -C "/tmp/elixir-source/elixir-${ELIXIR_VERSION}" \
+    && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/bin/* /usr/local/bin/ \
+    && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/lib/* /usr/local/lib/ \
+    && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/man/* /usr/local/man/ \
+    && rm -rf elixir-source.zip /tmp/elixir-source
 
 # Put erl_call(1) in the $PATH.
 RUN ln -fs /usr/lib/erlang/lib/erl_interface-*/bin/erl_call /usr/bin/erl_call
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
-      ldap-utils \
-      netcat-traditional \
-      python3-dev \
-      python3-simplejson \
-      python3 \
-      python3-dev \
-      python3-pip \
-      python3-setuptools \
-      daemonize
+    ldap-utils \
+    netcat-traditional \
+    python3-dev \
+    python3-simplejson \
+    python3 \
+    python3-dev \
+    python3-pip \
+    python3-setuptools \
+    daemonize
 
 # --------------------------------------------------------------------
 # Tools for building RabbitMQ packages (Debian, RPM, Windows installer)
 # --------------------------------------------------------------------
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
-      nsis \
-      rpm \
-      tofrodos
+    nsis \
+    rpm \
+    tofrodos
 
 # --------------------------------------------------------------------
 # Tools for testing RabbitMQ packages (Debian, RPM, Windows installer)
@@ -166,18 +166,18 @@ RUN apt-get install -y -V --fix-missing --no-install-recommends \
 # --------------------------------------------------------------------
 
 RUN git clone --depth 1 https://github.com/bats-core/bats-core.git && \
-cd bats-core && \
-./install.sh /usr && \
-cd .. && \
-rm -rf bats-core
+    cd bats-core && \
+    ./install.sh /usr && \
+    cd .. && \
+    rm -rf bats-core
 
 # --------------------------------------------------------------------
 # For debugging from the container directly
 # --------------------------------------------------------------------
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
-      bash-completion \
-      elinks \
-      vim
+    bash-completion \
+    elinks \
+    vim
 
 RUN apt-get autoclean -y
