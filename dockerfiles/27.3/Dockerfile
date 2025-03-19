@@ -83,12 +83,13 @@ RUN apt-get clean && \
     man \
     mandoc \
     osslsigncode \
-    p7zip \
+    7zip \
     rsync \
     xmlto \
     xsltproc \
     zip \
-    unzip
+    unzip && \
+    alias 7z=7zz
 
 RUN apt-get install -y -V --fix-missing --no-install-recommends \
     -t bookworm-backports \
