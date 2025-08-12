@@ -31,18 +31,19 @@ RUN apt-get clean && \
     debconf-utils \
     gnupg
 
-# Our own rabbitmq-erlang repository to provision Erlang.
-RUN echo 'deb https://ppa2.rabbitmq.com/rabbitmq/rabbitmq-erlang/deb/debian bookworm main' > /etc/apt/sources.list.d/rabbitmq-erlang.list && \
-    wget -O- https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/gpg.E495BB49CC4BBE5B.key | apt-key add -
+    # Our own rabbitmq-erlang repository to provision Erlang.
+    RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/debian/bookworm bookworm main' > /etc/apt/sources.list.d/rabbitmq-erlang.list && \
+        curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | gpg --dearmor | tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null && \
+        curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | apt-key add -
 
-# We need to set an APT preference to make sure $ERLANG_VERSION is
-# used for all erlang* packages. Without this, apt-get(1) would try to
-# install dependencies using the latest version. This would conflict
-# with the strict pinning in all packages, and thus fail.
-RUN ERLANG_VERSION=1:26.2.5.11-1 && \
-    echo 'Package: erlang*' > /etc/apt/preferences.d/erlang && \
-    echo "Pin: version $ERLANG_VERSION" >> /etc/apt/preferences.d/erlang && \
-    echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/erlang
+    # We need to set an APT preference to make sure $ERLANG_VERSION is
+    # used for all erlang* packages. Without this, apt-get(1) would try to
+    # install dependencies using the latest version. This would conflict
+    # with the strict pinning in all packages, and thus fail.
+    RUN ERLANG_VERSION=1:26.2.5.14-1 && \
+        echo 'Package: erlang*' > /etc/apt/preferences.d/erlang && \
+        echo "Pin: version $ERLANG_VERSION" >> /etc/apt/preferences.d/erlang && \
+        echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/erlang
 
 # --------------------------------------------------------------------
 # Packages to build RabbitMQ.
