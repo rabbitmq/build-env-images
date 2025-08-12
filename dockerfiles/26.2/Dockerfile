@@ -27,7 +27,7 @@ RUN apt-get clean && \
     apt-get install -y -V --no-install-recommends \
     apt-transport-https \
     ca-certificates \
-    wget \
+    curl \
     debconf-utils \
     gnupg
 
