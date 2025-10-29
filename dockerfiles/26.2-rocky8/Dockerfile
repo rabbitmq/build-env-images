@@ -50,7 +50,7 @@ RUN dnf install -y \
 
 # Build Erlang from source using kerl
 # https://github.com/kerl/kerl
-ARG ERLANG_VERSION=26.2.5
+ARG ERLANG_VERSION=26.2.5.15
 RUN curl -fSL -o /usr/local/bin/kerl \
     https://raw.githubusercontent.com/kerl/kerl/master/kerl && \
     chmod +x /usr/local/bin/kerl && \
