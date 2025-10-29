@@ -59,8 +59,13 @@ image. This work may be done in the future.
 To pull it:
 
 ```bash
-# for Erlang 26.x
+# for Erlang 26.x on Rocky Linux 8
 docker pull rabbitmqdevenv/build-env-26.2-rocky8
+```
+
+```bash
+# for Erlang 26.x on Rocky Linux 9
+docker pull rabbitmqdevenv/build-env-26.2-rocky9
 ```
 
 ## Copyright and License
