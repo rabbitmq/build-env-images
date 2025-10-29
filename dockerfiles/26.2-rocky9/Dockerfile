@@ -45,7 +45,8 @@ RUN dnf install -y \
     openssl-devel \
     perl \
     tar \
-    libxslt
+    libxslt \
+    cmake
 
 # Build Erlang from source using kerl
 # https://github.com/kerl/kerl
