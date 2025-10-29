@@ -1,9 +1,9 @@
-name: Rebuild Erlang 26.2 on RockyLinux 8 image
+name: Rebuild Erlang 26.2 on RockyLinux 9 image
 
 on:
   push:
     branches: ['main']
-    paths: ['dockerfiles/26.2-rocky8/Dockerfile', '.github/workflows/image-26.2-rocky8.yml']
+    paths: ['dockerfiles/26.2-rocky9/Dockerfile', '.github/workflows/image-26.2-rocky9.yml']
 
 jobs:
   docker:
@@ -23,8 +23,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
-          file: dockerfiles/26.2-rocky8/Dockerfile
+          file: dockerfiles/26.2-rocky9/Dockerfile
           # Building for amd64 only to reduce build time
           platforms: linux/amd64
           push: true
-          tags: rabbitmqdevenv/build-env-26.2-rocky8:latest
+          tags: rabbitmqdevenv/build-env-26.2-rocky9:latest
