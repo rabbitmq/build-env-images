@@ -29,36 +29,68 @@ RUN dnf clean all && \
     gnupg2 \
     wget
 
-# Install Erlang 26.x from GitHub releases
-# Following instructions from:
-# https://github.com/rabbitmq/erlang-rpm/blob/erlang-26/README.md
-# Since the YUM repository doesn't have aarch64 packages, we download
-# directly from GitHub releases
-RUN ERLANG_VERSION="26.2.5.14" && \
-    ERLANG_RPM_VERSION="26.2.5.14-1.el8" && \
-    ARCH=$(uname -m) && \
-    cd /tmp && \
-    curl -fSL -o erlang-${ERLANG_VERSION}-1.el8.${ARCH}.rpm \
-    "https://github.com/rabbitmq/erlang-rpm/releases/download/v${ERLANG_VERSION}/erlang-${ERLANG_RPM_VERSION}.${ARCH}.rpm" && \
-    dnf install -y erlang-${ERLANG_VERSION}-1.el8.${ARCH}.rpm && \
-    rm -f erlang-${ERLANG_VERSION}-1.el8.${ARCH}.rpm
+# Install git first (required by kerl)
+RUN dnf install -y git
+
+# Install Erlang build dependencies required by kerl
+# https://github.com/kerl/kerl#required-dependencies
+# Building without: wx (GUI), ODBC, SCTP, jinterface
+RUN dnf install -y \
+    autoconf \
+    gcc \
+    gcc-c++ \
+    glibc-devel \
+    make \
+    ncurses-devel \
+    openssl-devel \
+    perl \
+    tar \
+    libxslt
+
+# Build Erlang from source using kerl
+# https://github.com/kerl/kerl
+ARG ERLANG_VERSION=26.2.5
+RUN curl -fSL -o /usr/local/bin/kerl \
+    https://raw.githubusercontent.com/kerl/kerl/master/kerl && \
+    chmod +x /usr/local/bin/kerl && \
+    kerl update releases && \
+    KERL_CONFIGURE_OPTIONS="--disable-debug \
+        --disable-silent-rules \
+        --enable-dynamic-ssl-lib \
+        --disable-hipe \
+        --enable-jit \
+        --enable-shared-zlib \
+        --enable-smp-support \
+        --enable-threads \
+        --enable-kernel-poll \
+        --with-microstate-accounting=extra \
+        --without-javac \
+        --without-jinterface \
+        --without-odbc \
+        --without-wx" \
+    KERL_BUILD_DOCS=no \
+    kerl build ${ERLANG_VERSION} ${ERLANG_VERSION} && \
+    kerl install ${ERLANG_VERSION} /usr/local/erlang && \
+    kerl cleanup ${ERLANG_VERSION} && \
+    rm -rf /tmp/kerl-* ~/.kerl
+
+# Activate Erlang installation by sourcing the activate script
+# and adding to PATH
+ENV PATH=/usr/local/erlang/bin:$PATH
+RUN echo 'source /usr/local/erlang/activate' >> /etc/profile.d/erlang.sh
 
 # --------------------------------------------------------------------
 # Packages to build RabbitMQ.
 # --------------------------------------------------------------------
 
-# Install build dependencies
+# Install additional build dependencies for RabbitMQ
+# (gcc, gcc-c++, make, libxslt already installed for Erlang)
 RUN dnf install -y \
-    gcc \
-    gcc-c++ \
-    make \
     clang \
-    curl \
     rsync \
     zip \
     unzip \
     xmlto \
-    libxslt \
     man-db
 
 # Install p7zip from EPEL
@@ -66,14 +98,15 @@ RUN dnf install -y epel-release && \
     dnf install -y p7zip p7zip-plugins && \
     ln -sf /usr/bin/7za /usr/bin/7z
 
-# Install git from a more recent source if needed
-RUN dnf install -y git openssh-clients
+# Install openssh-clients (git already installed earlier for kerl)
+RUN dnf install -y openssh-clients
 
-# Verify the version of the installed Erlang packages.
+# Verify the version of the installed Erlang.
 RUN set -xe \
-    && installed_version=$(rpm -q --queryformat '%{VERSION}-%{RELEASE}' erlang) \
-    && echo "Installed Erlang version: $installed_version" \
-    && rpm -q erlang | grep -q "26.2.5.14"
+    && erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' \
+    -noshell \
+    && erl -eval 'erlang:display(erlang:system_info(version)), halt().' \
+    -noshell
 
 RUN set -xe \
     && REBAR3_VERSION="3.24.0" \
@@ -84,8 +117,8 @@ RUN set -xe \
     && mv "rebar3-${REBAR3_VERSION}" /usr/local/bin/rebar3 \
     && chmod +x /usr/local/bin/rebar3
 
-# Compile Elixir from source so that we know for sure what version was
-# used to built it. Elixir's bin and lib are installed under
+# Compile Elixir from source so that we know for sure what version
+# was used to built it. Elixir's bin and lib are installed under
 # /usr/local/bin and /usr/local/lib.
 RUN set -xe \
     && ELIXIR_VERSION="1.17.3" \
@@ -101,7 +134,8 @@ RUN set -xe \
     && rm -rf elixir-source.zip /tmp/elixir-source
 
 # Put erl_call(1) in the $PATH.
-RUN ln -fs /usr/lib64/erlang/lib/erl_interface-*/bin/erl_call /usr/bin/erl_call
+RUN ln -fs /usr/local/erlang/lib/erl_interface-*/bin/erl_call \
+    /usr/bin/erl_call
 
 RUN dnf install -y \
     openldap-clients \
