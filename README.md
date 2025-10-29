@@ -46,6 +46,23 @@ docker pull rabbitmqdevenv/build-env-26.2
 docker pull rabbitmqdevenv/build-env-27.3
 ```
 
+### Rocky Linux variants
+
+There are Rocky Linux variants to build and test RabbitMQ. These images are an adapted copy
+of Debian Bookworm-based images. They aim to provide Erlang 26.x and 27.x with a recent version
+of Elixir.
+
+Only `amd64` packages are produced because cross-compiling inside a container, inside Actions,
+is terribly slow. Further work is required to build images natively and merge them as a multi-arch
+image. This work may be done in the future.
+
+To pull it:
+
+```bash
+# for Erlang 26.x
+docker pull rabbitmqdevenv/build-env-26.2-rocky8
+```
+
 ## Copyright and License
 
 This work is dual-licensed under the Apache License 2.0 and the Mozilla Public License 2.0.
