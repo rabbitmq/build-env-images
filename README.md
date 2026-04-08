@@ -28,8 +28,10 @@ See [Actions](https://github.com/rabbitmq/build-env-images/actions).
 
 ## Server Build Environment Images (amd64)
 
-This Debian Bookworm-based images provide very recent versions of Erlang 27.x and 26.x plus a very
-recent version of Elixir.
+### Debian Variants
+
+This Debian Bookworm-based images provide very recent versions of Erlang 27.x and 26.x plus
+a reasonably recent, supported version of Elixir.
 
 Only `amd64` packages are produced because our team only produces `amd64` Debian packages for Erlang
 at the moment.
@@ -46,11 +48,12 @@ docker pull rabbitmqdevenv/build-env-26.2
 docker pull rabbitmqdevenv/build-env-27.3
 ```
 
-### Rocky Linux variants
+### Rocky Linux Variants
 
-There are Rocky Linux variants to build and test RabbitMQ. These images are an adapted copy
-of Debian Bookworm-based images. They aim to provide Erlang 26.x and 27.x with a recent version
-of Elixir. Rocky Linux 8, 9, and 10 are all supported.
+There are Rocky Linux variants to build and test RabbitMQ.
+
+These are functional equivalents to the Debian variants: they aim to provide Erlang 26.x and 27.x with a recent version
+of Elixir. Rocky Linux 8, 9, and 10-based images are all available
 
 Only `amd64` packages are produced because cross-compiling inside a container, inside Actions,
 is terribly slow. Further work is required to build images natively and merge them as a multi-arch
