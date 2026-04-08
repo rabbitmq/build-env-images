@@ -50,22 +50,26 @@ docker pull rabbitmqdevenv/build-env-27.3
 
 There are Rocky Linux variants to build and test RabbitMQ. These images are an adapted copy
 of Debian Bookworm-based images. They aim to provide Erlang 26.x and 27.x with a recent version
-of Elixir.
+of Elixir. Rocky Linux 8, 9, and 10 are all supported.
 
 Only `amd64` packages are produced because cross-compiling inside a container, inside Actions,
 is terribly slow. Further work is required to build images natively and merge them as a multi-arch
 image. This work may be done in the future.
 
-To pull it:
+To pull them:
 
 ```bash
-# for Erlang 26.x on Rocky Linux 8
+# Erlang 26.x
 docker pull rabbitmqdevenv/build-env-26.2-rocky8
+docker pull rabbitmqdevenv/build-env-26.2-rocky9
+docker pull rabbitmqdevenv/build-env-26.2-rocky10
 ```
 
 ```bash
-# for Erlang 26.x on Rocky Linux 9
-docker pull rabbitmqdevenv/build-env-26.2-rocky9
+# Erlang 27.x
+docker pull rabbitmqdevenv/build-env-27.3-rocky8
+docker pull rabbitmqdevenv/build-env-27.3-rocky9
+docker pull rabbitmqdevenv/build-env-27.3-rocky10
 ```
 
 ## Copyright and License

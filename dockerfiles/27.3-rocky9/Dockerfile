@@ -13,95 +13,101 @@
 ## The Initial Developer of the Original Code is GoPivotal, Inc.
 ## Copyright (c) 2007-2025 Broadcom, Inc. or its subsidiaries.
 
-FROM debian:bookworm
+FROM rockylinux:9
 
 ENV LANG='C.UTF-8'
 
-# Enable backports.
-RUN echo 'deb http://httpredir.debian.org/debian bookworm-backports main' \
-    >> /etc/apt/sources.list.d/backports.list
+# Enable CRB (CodeReady Builder) repository for additional packages
+RUN dnf install -y 'dnf-command(config-manager)' && \
+    dnf config-manager --set-enabled crb
 
 # Prerequisites to mess with packages.
-RUN apt-get clean && \
-    apt-get update && \
-    apt-get install -y -V --no-install-recommends \
-    apt-transport-https \
+RUN dnf clean all && \
+    dnf install -y --allowerasing \
     ca-certificates \
     curl \
-    debconf-utils \
-    gnupg
+    gnupg2 \
+    wget
 
-# Our own rabbitmq-erlang repository to provision Erlang.
-RUN echo 'deb [arch=amd64 signed-by=/usr/share/keyrings/com.rabbitmq.team.gpg] https://deb1.rabbitmq.com/rabbitmq-erlang/debian/bookworm bookworm main' > /etc/apt/sources.list.d/rabbitmq-erlang.list && \
-    curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | gpg --dearmor | tee /usr/share/keyrings/com.rabbitmq.team.gpg > /dev/null && \
-    curl -1sLf "https://keys.openpgp.org/vks/v1/by-fingerprint/0A9AF2115F4687BD29803A206B73A36E6026DFCA" | apt-key add -
+# Install git first (required by kerl)
+RUN dnf install -y git
 
-# We need to set an APT preference to make sure $ERLANG_VERSION is
-# used for all erlang* packages. Without this, apt-get(1) would try to
-# install dependencies using the latest version. This would conflict
-# with the strict pinning in all packages, and thus fail.
-RUN ERLANG_VERSION=1:27.3.4.9-1 && \
-    echo 'Package: erlang*' > /etc/apt/preferences.d/erlang && \
-    echo "Pin: version $ERLANG_VERSION" >> /etc/apt/preferences.d/erlang && \
-    echo 'Pin-Priority: 1000' >> /etc/apt/preferences.d/erlang
+# Install Erlang build dependencies required by kerl
+# https://github.com/kerl/kerl#required-dependencies
+# Building without: wx (GUI), ODBC, SCTP, jinterface
+RUN dnf install -y \
+    autoconf \
+    gcc \
+    gcc-c++ \
+    glibc-devel \
+    make \
+    ncurses-devel \
+    openssl-devel \
+    perl \
+    tar \
+    libxslt \
+    cmake
+
+# Build Erlang from source using kerl
+# https://github.com/kerl/kerl
+ARG ERLANG_VERSION=27.3.4.9
+RUN curl -fSL -o /usr/local/bin/kerl \
+    https://raw.githubusercontent.com/kerl/kerl/master/kerl && \
+    chmod +x /usr/local/bin/kerl && \
+    kerl update releases && \
+    KERL_CONFIGURE_OPTIONS="--disable-debug \
+        --disable-silent-rules \
+        --enable-dynamic-ssl-lib \
+        --disable-hipe \
+        --enable-jit \
+        --enable-shared-zlib \
+        --enable-smp-support \
+        --enable-threads \
+        --enable-kernel-poll \
+        --with-microstate-accounting=extra \
+        --without-javac \
+        --without-jinterface \
+        --without-odbc \
+        --without-wx" \
+    KERL_BUILD_DOCS=no \
+    kerl build ${ERLANG_VERSION} ${ERLANG_VERSION} && \
+    kerl install ${ERLANG_VERSION} /usr/local/erlang && \
+    kerl cleanup ${ERLANG_VERSION} && \
+    rm -rf /tmp/kerl-* ~/.kerl
+
+# Activate Erlang installation by sourcing the activate script
+# and adding to PATH
+ENV PATH=/usr/local/erlang/bin:$PATH
+RUN echo 'source /usr/local/erlang/activate' >> /etc/profile.d/erlang.sh
 
 # --------------------------------------------------------------------
 # Packages to build RabbitMQ.
 # --------------------------------------------------------------------
 
-RUN apt-get clean && \
-    apt-get update && \
-    apt-get install -y -V --fix-missing --no-install-recommends \
-    build-essential \
+# Install additional build dependencies for RabbitMQ
+# (gcc, gcc-c++, make, libxslt already installed for Erlang)
+RUN dnf install -y \
     clang \
-    curl \
-    debhelper \
-    # for Debian package builds
-    elixir \
-    erlang-base \
-    erlang-crypto \
-    erlang-edoc \
-    erlang-eldap \
-    erlang-erl-docgen \
-    erlang-eunit \
-    erlang-inets \
-    erlang-mnesia \
-    erlang-os-mon \
-    erlang-parsetools \
-    erlang-public-key \
-    erlang-runtime-tools \
-    erlang-ssh \
-    erlang-ssl \
-    erlang-syntax-tools \
-    erlang-tools \
-    erlang-xmerl \
-    erlang-nox \
-    erlang-dev \
-    erlang-src \
-    erlang-common-test \
-    erlang-dialyzer \
-    libcurl3-gnutls \
-    man \
-    mandoc \
-    7zip \
     rsync \
-    xmlto \
-    xsltproc \
     zip \
-    unzip && \
-    ln -s $(which 7zz) /usr/bin/7z
+    unzip \
+    xmlto \
+    man-db
 
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-    -t bookworm-backports \
-    git openssh-client
+# Install p7zip from EPEL
+RUN dnf install -y epel-release && \
+    dnf install -y p7zip p7zip-plugins && \
+    ln -sf /usr/bin/7za /usr/bin/7z
 
-# Verify the version of the installed Erlang packages.
-# The version was pinned above, but if that specific version is unavailable,
-# the latest version will be installed, which we don't want.
+# Install openssh-clients (git already installed earlier for kerl)
+RUN dnf install -y openssh-clients
+
+# Verify the version of the installed Erlang.
 RUN set -xe \
-    && installed_version=$(dpkg -s erlang-nox | grep -E '^Version:' | awk '{ print $2; }') \
-    && wanted_version=$(awk '/^Pin:/ { print $3; }' < /etc/apt/preferences.d/erlang) \
-    && test "$installed_version" = "$wanted_version"
+    && erl -eval 'erlang:display(erlang:system_info(otp_release)), halt().' \
+    -noshell \
+    && erl -eval 'erlang:display(erlang:system_info(version)), halt().' \
+    -noshell
 
 RUN set -xe \
     && REBAR3_VERSION="3.24.0" \
@@ -112,8 +118,9 @@ RUN set -xe \
     && mv "rebar3-${REBAR3_VERSION}" /usr/local/bin/rebar3 \
     && chmod +x /usr/local/bin/rebar3
 
-# Compile Elixir from source so that we know for sure what version was used to built it.
-# Elixir's bin and lib are installed under /usr/local/bin and /usr/local/lib.
+# Compile Elixir from source so that we know for sure what version
+# was used to built it. Elixir's bin and lib are installed under
+# /usr/local/bin and /usr/local/lib.
 RUN set -xe \
     && ELIXIR_VERSION="1.18.4" \
     && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/refs/tags/v${ELIXIR_VERSION}.zip" \
@@ -124,38 +131,37 @@ RUN set -xe \
     && make -C "/tmp/elixir-source/elixir-${ELIXIR_VERSION}" \
     && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/bin/* /usr/local/bin/ \
     && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/lib/* /usr/local/lib/ \
-    && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/man/* /usr/local/man/ \
+    && mv /tmp/elixir-source/elixir-${ELIXIR_VERSION}/man/* /usr/local/share/man/ \
     && rm -rf elixir-source.zip /tmp/elixir-source
 
 # Put erl_call(1) in the $PATH.
-RUN ln -fs /usr/lib/erlang/lib/erl_interface-*/bin/erl_call /usr/bin/erl_call
+RUN ln -fs /usr/local/erlang/lib/erl_interface-*/bin/erl_call \
+    /usr/bin/erl_call
 
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-    ldap-utils \
-    netcat-traditional \
-    python3-dev \
-    python3-simplejson \
+RUN dnf install -y \
+    openldap-clients \
+    nmap-ncat \
+    python3-devel \
     python3 \
-    python3-dev \
     python3-pip \
-    python3-setuptools \
-    daemonize
+    python3-setuptools
 
 # --------------------------------------------------------------------
 # Tools for building RabbitMQ packages (Debian, RPM, Windows installer)
 # --------------------------------------------------------------------
 
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-    nsis \
-    rpm \
-    tofrodos
+# Install NSIS for Windows installer builds
+# Note: NSIS is not available in standard Rocky repos, using EPEL
+RUN dnf install -y epel-release && \
+    dnf install -y \
+    rpm-build \
+    rpm-sign \
+    createrepo \
+    dos2unix
 
 # Build osslsigncode from source so all images ship the same version of the
 # Windows installer signing tool.
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-    cmake \
-    libcurl4-openssl-dev \
-    libssl-dev && \
+RUN dnf install -y libcurl-devel zlib-devel && \
     OSSLSIGNCODE_VERSION="2.13" && \
     OSSLSIGNCODE_SHA256="ee95638b8bec0c019ddf28cb14988645abbd180dcd017536338b7d0d5eaaea96" && \
     curl -fSL -o osslsigncode.tar.gz \
@@ -171,13 +177,8 @@ RUN apt-get install -y -V --fix-missing --no-install-recommends \
 # Tools for testing RabbitMQ packages (Debian, RPM, Windows installer)
 # --------------------------------------------------------------------
 
-#
-# Debian
-#
-
-# Unlike apt, dpkg -i requires package dependencies to be pre-installed
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
-    logrotate
+# Install logrotate for package testing
+RUN dnf install -y logrotate
 
 # --------------------------------------------------------------------
 # For running bats tests
@@ -193,9 +194,9 @@ RUN git clone --depth 1 https://github.com/bats-core/bats-core.git && \
 # For debugging from the container directly
 # --------------------------------------------------------------------
 
-RUN apt-get install -y -V --fix-missing --no-install-recommends \
+RUN dnf install -y \
     bash-completion \
     elinks \
     vim
 
-RUN apt-get autoclean -y
+RUN dnf clean all

@@ -157,8 +157,21 @@ RUN dnf install -y epel-release && \
     rpm-build \
     rpm-sign \
     createrepo \
-    osslsigncode \
     dos2unix
+
+# Build osslsigncode from source so all images ship the same version of the
+# Windows installer signing tool.
+RUN dnf install -y libcurl-devel zlib-devel && \
+    OSSLSIGNCODE_VERSION="2.13" && \
+    OSSLSIGNCODE_SHA256="ee95638b8bec0c019ddf28cb14988645abbd180dcd017536338b7d0d5eaaea96" && \
+    curl -fSL -o osslsigncode.tar.gz \
+        "https://github.com/mtrojnar/osslsigncode/archive/refs/tags/${OSSLSIGNCODE_VERSION}.tar.gz" && \
+    echo "${OSSLSIGNCODE_SHA256} osslsigncode.tar.gz" | sha256sum -c - && \
+    tar -xzf osslsigncode.tar.gz && \
+    cmake -S "osslsigncode-${OSSLSIGNCODE_VERSION}" -B osslsigncode-build && \
+    cmake --build osslsigncode-build && \
+    cmake --install osslsigncode-build && \
+    rm -rf osslsigncode.tar.gz "osslsigncode-${OSSLSIGNCODE_VERSION}" osslsigncode-build
 
 # --------------------------------------------------------------------
 # Tools for testing RabbitMQ packages (Debian, RPM, Windows installer)
