@@ -116,9 +116,9 @@ RUN set -xe \
 # Compile Elixir from source so that we know for sure what version was used to built it.
 # Elixir's bin and lib are installed under /usr/local/bin and /usr/local/lib.
 RUN set -xe \
-    && ELIXIR_VERSION="1.17.3" \
+    && ELIXIR_VERSION="1.18.4" \
     && ELIXIR_DOWNLOAD_URL="https://github.com/elixir-lang/elixir/archive/refs/tags/v${ELIXIR_VERSION}.zip" \
-    && ELIXIR_DOWNLOAD_SHA256="94544b7200265ee45ac7fa6d4681824815c888a009face7f2d1d6fe38624814c" \
+    && ELIXIR_DOWNLOAD_SHA256="1783d8919507f12cea817f79f6b01a44fa0c68cd498f31a096c2a6ea48a55de9" \
     && curl -fSL -o elixir-source.zip $ELIXIR_DOWNLOAD_URL \
     && echo "$ELIXIR_DOWNLOAD_SHA256 elixir-source.zip" | sha256sum -c - \
     && unzip -d /tmp/elixir-source elixir-source.zip \
